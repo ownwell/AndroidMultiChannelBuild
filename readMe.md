@@ -148,7 +148,10 @@ public class MutiChannelConfig {
     return mSettinsSP.getString(Channel, DEFAULT_CHANNEL);
   }
 }
-```
+'''
+
+每次都通过`getChannel`获取渠道，再调用第三方统计设置渠道的方法，就Ok。打包节省了您的一大笔时间，你就偷着了吧。
+
 
 
 
