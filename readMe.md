@@ -22,11 +22,11 @@
 
 其中channel.txt放的就是我们自己的渠道，每个渠道记得换行，增删都是添加或删除一行。
 
-直接运行这个python脚本（python MultiChannelBuildTool.py），这个目录下会有个文件夹，生成一堆的apk文件。
+直接运行这个python脚本（python MultiChannelBuildTool.py），这个目录下会生成包含了各个渠道包的文件夹。
 
-这个文件就是我们需要的各个渠道，需要的话可以先自己用apktool自己反编译看看是不是再Meta-INF文件下有`channel_渠道名称`这个文件。
+对于第一次使用这个方式的人，一定要记得去检查是否生成了各个渠道，需要的话可以先自己用apktool自己反编译看看是不是再Meta-INF文件下有`channel_渠道名称`这个文件。若有就OK，说明Everything in control，若没有记得查看原因。
 
-    改进的python脚本中，可以使用任何渠道包，再生成子包过程中，发现母包带有渠道信息，就会将母包的渠道信息给删除，重新生成一个干净的没有渠道信息母包，再去生成各个渠道包。
+    改进的python脚本中，可以使用任何渠道包，在生成子包过程中，发现母包带有渠道信息，就会将母包的渠道文件给删除，再重新生成一个干净的、没有渠道信息母包，然后按照以前的方式生成各个渠道包。
     
 
 
@@ -57,7 +57,7 @@ import java.util.zip.ZipFile;
  * 只有新版本才进行从从Zip文件中获得安装包的渠道名称，否则都是读取本地缓存的渠道名称</p>
  * <p>
  * 已经总结为博客，博客链接：http://ownwell.github.io/2015/09/28/mutichannel4Android/
- * 多渠道包的脚本，在app/script文件夹下
+ *
  * </p>
  */
 
@@ -145,7 +145,7 @@ public class MutiChannelConfig {
   private static boolean isNewVersion(Context mContext) {
     SharedPreferences mSettinsSP =
         mContext.getSharedPreferences(Channel_File, Activity.MODE_PRIVATE);
-    String version = APPUtils.getAppVersion(mContext);
+    String version = APPUtils.getAppVersion(mContext);// 得到apk的版本信息
     LayzLog.d("version%s", version);
     return !mSettinsSP.getString(Version, "").equals(version);
   }
