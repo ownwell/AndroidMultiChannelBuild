@@ -1,16 +1,44 @@
 # 使用原理
 这个脚本是参考美团技术博客中提到的在apk文件添加一个渠道文件名的方法，具体文章见本人的博客：[Android的快速多渠道打包](http://ownwell.github.io/2015/09/28/mutichannel4Android/)。
 
+
+## 更新日志
+2016年9月22日
+----------------
+之前发现以前的脚本需要zipalign对齐，否则在有些商量会报这个错误，我们需要用到zipalign,需要老版本打好的包再进行zipalign对齐。7-9行即为新加的关键代码。
+
+其中zg是我为zipalign   
+<img src="http://7xj9f0.com1.z0.glb.clouddn.com/md/1474528187208.png" width="420"/>
+
+
+```python
+# 写入渠道信息
+zipped.write(src_empty_file, empty_channel_file)
+# 关闭zip流
+zipped.close()
+
+    zipalign = os.environ.get('zg')
+    ## zipAlign
+    zipAlign = "%s -v 4 %s %s" % (zipalign,target_apk, last_apk)
+    subprocess.call(zipAlign, shell=True)
+
+zipshell = "zip apks.zip %s"%last_dir
+subprocess.call(zipshell, shell=True)
+
+```
+
+
+
 # 使用方法
 ## 打包
-   
+
    一个已经打包的母包，通过Python脚本和我们的渠道信息，会生成各个渠道。100个渠道，这个操作耗时不到20s，除了生成母包耗时外，生成渠道包，是瞬间的！！！！！！
-    
+
     母包：没有渠道信息的包
     子包:通过母包打出渠道信息的包，其实就是再母包的apk的`MATE—INF下`新建一个空文件，文件名称有渠道信息。
-   
-   
-   
+
+
+
 将一个已经签名过的母包（现在也支持任意的渠道包），放到项目的根目录下。
 文件结构
 
@@ -27,7 +55,7 @@
 对于第一次使用这个方式的人，一定要记得去检查是否生成了各个渠道，需要的话可以先自己用apktool自己反编译看看是不是再Meta-INF文件下有`channel_渠道名称`这个文件。若有就OK，说明Everything in control，若没有记得查看原因。
 
     改进的python脚本中，可以使用任何渠道包，在生成子包过程中，发现母包带有渠道信息，就会将母包的渠道文件给删除，再重新生成一个干净的、没有渠道信息母包，然后按照以前的方式生成各个渠道包。
-    
+
 
 
 ## 读取
@@ -162,7 +190,3 @@ public class MutiChannelConfig {
 ```
 
 每次都通过`getChannel`获取渠道，再调用第三方统计设置渠道的方法，就Ok。打包节省了您的一大笔时间，你就偷着了吧。
-
-
-
-
